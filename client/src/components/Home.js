@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Post from './Post'
 
 const Home = () => {
     const [feed, setFeed] = useState('')
@@ -6,20 +7,40 @@ const Home = () => {
         const fetchPost = async() => {
             const response = await fetch('http://localhost:8080')
             const postData = await response.json()
-            setFeed(postData)
+            setFeed(postData.postList)
             console.log(postData)
         }
         fetchPost().catch(console.error)
     }, [])
+
+    const showComment = (postId) => {
+        const replace = (commentArray) => {
+            console.log(feed, 'feed')
+            let updatedPost = feed.map(x => {
+                if (x._id === postId) {
+                    return { ...x, comment: commentArray.comment}
+                }
+                return x
+            })
+            setFeed(updatedPost)
+        }
+        const fetchThisComment = async() => {
+            const response = await fetch('http://localhost:8080/users/'+ postId)
+            const postData = await response.json()
+            console.log(postData, 'POSTDAATA') 
+            replace(postData)
+        }
+        fetchThisComment().catch(console.error)
+    }
+
     return (
         <div>
-           {feed.postList ? feed.postList.map((postInfo) => {
+            <button onClick={() => {
+                console.log(feed)
+            }}>CONSOLE LOGS</button>
+           {feed ? feed.map((postInfo) => {
                 return(
-                    <div key={postInfo._id}>
-                        <p key={postInfo._id}>{postInfo.post}</p>
-                        <p>{postInfo.comment.map(x => <p key={x}>{x}</p>)}</p>
-                        <p>-----------------------------</p>
-                    </div>
+                    <Post postInfo={postInfo} key={postInfo._id} showComment={showComment}/>
                 )
            }): <h1>Loading</h1>}
         </div>
