@@ -3,7 +3,7 @@ import {useState} from 'react'
 const CreatePost = ({token, userId, loadFeed}) => {
     const [post, setPost] = useState('')
     const addPost = async () => {
-        const jsonData = await fetch('http://localhost:8080/users/posts', {
+        const jsonData = await fetch(`http://localhost:8080/users/${userId}/posts/`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
