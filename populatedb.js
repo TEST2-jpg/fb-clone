@@ -37,13 +37,12 @@ const populateUser = async () => {
 const populatePost = async () => {
     await Post.deleteMany({})
     await Comment.deleteMany({})
-
     for (let index = 0; index < 5; index++) {
         console.log(users[Math.floor(Math.random() * users.length)])
         const user = await User.findOne({first_name: users[Math.floor(Math.random() * users.length)]})
-        const post = new Post({ post: faker.hacker.phrase() })
+        const post = new Post({ post: faker.hacker.phrase(), author: user._id })
         user.posts.push(post)
-        const comment = new Comment({ comment: faker.hacker.phrase() })
+        const comment = new Comment({ comment: faker.hacker.phrase(), author: user._id })
         post.comment.push(comment)
         console.log(comment, post)
         await comment.save()
