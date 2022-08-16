@@ -2,12 +2,11 @@ const Post = require('../models/post')
 const Comment = require('../models/comment')
 const User = require('../models/user')
 
-
 exports.getPostsComment = async (req, res, next) => {
     const postId = req.params.postId
     try {
         const post = await Post.findById(postId)
-        const commentsPop = await post.populate({ path: 'comment', model: Comment })
+        const commentsPop = await post.populate({ path: 'comment', populate: {path: 'author' , select: ['first_name', 'last_name']}})
         await res.status(200).json({ comment: commentsPop.comment })
     } catch (error) {
         if (error) return next(error)
@@ -42,4 +41,15 @@ exports.deletePost = async (req, res, next) => {
             }
             Post.findByIdAndRemove(postId, () => res.status(200).json({message:'deleted'}))
         });
+}
+
+exports.postComment = async (req, res, next) => {
+    const {postId} = req.params
+    const {commentBody, userId} = req.body
+    const post = await Post.findById(postId)
+    const comment = new Comment({comment: commentBody, author: userId})
+    post.comment.push(comment)
+    await comment.save()
+    await post.save()
+    res.status(200).json({message: 'in postcomment post'})
 }
