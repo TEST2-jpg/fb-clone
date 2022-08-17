@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { ReactComponent as Option } from '../assets/options.svg'
 import { ReactComponent as Profile } from '../assets/profile.svg'
 import WriteComment from "./WriteComment"
-
+import { Link } from "react-router-dom"
 
 const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
     const [btnState, setBtn] = useState(true)
@@ -45,14 +45,14 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
                 <div className="d-flex w-100 align-items-center">
                     <span><Profile className='profile' /></span>
                     <div className="flex-container-column flex-grow-1">
-                        <h2 className="author-name">{`${postInfo.author.first_name} ${postInfo.author.last_name}`}</h2>
+                        <Link to={`${postInfo.author.first_name}.${postInfo.author.last_name}`} state={{id: postInfo.author._id}}><h2 className="author-name">{`${postInfo.author.first_name} ${postInfo.author.last_name}`}</h2></Link>
                         <div className="created-at">22h</div>
                     </div>
                     <Option />
                 </div>
             </div>
             <div className='px-3 fs-6 font-color'>{postInfo.post}</div>
-            {postStat !== 0 ? <div className="px-3"> {postStat > 1 ? <p>{postStat} comments</p>: <p>{postStat} comment</p>}</div> : null}
+            {postStat !== 0 ? <div className="px-3"> {postStat > 1 ? <p>{postStat} comments</p> : <p>{postStat} comment</p>}</div> : null}
             <div className="border-top border-bottom d-flex justify-content-around p-2">
                 <button className="rounded flex-fill" onClick={() => {
                     if (btnState) showComment(postInfo._id)
@@ -66,10 +66,10 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
             </div>
             <WriteComment showComment={showComment} userId={userId} authorId={postInfo.author._id} token={token} postInfoId={postInfo._id} />
             {postInfo.comment.map((x, i) => <div key={i}> {x.author.first_name} {x.author.last_name} ---- {x.comment}</div>)}
-            <div onClick={() => {
+            {postStat <= postInfo.comment.length ? null : <div onClick={() => {
                 if (btnState) showComment(postInfo._id)
                 preventFetch()
-            }}>View more comments</div>
+            }}>View more comments</div>}
         </div>
     )
 }
