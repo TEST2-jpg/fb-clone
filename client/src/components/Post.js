@@ -18,7 +18,6 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
                 Authorization: 'Bearer ' + token
             }
         })
-        console.log('run')
     }
     const getPostStat = async (postId) => {
         try {
@@ -35,6 +34,28 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
         }
     }
 
+    const likePost = async (postId) => {
+        await fetch(`http://localhost:8080/users/${userId}/posts/${postId}/like`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+                Authorization: 'Bearer ' + token
+            },
+        })
+        loadFeed()
+    }
+
+    const unlikePost = async (postId) => {
+        await fetch(`http://localhost:8080/users/${userId}/posts/${postId}/unlike`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+                Authorization: 'Bearer ' + token
+            },
+        })
+        loadFeed()
+    }
+
     useEffect(() => {
         getPostStat(postInfo._id)
     }, [])
@@ -45,20 +66,22 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
                 <div className="d-flex w-100 align-items-center">
                     <span><Profile className='profile' /></span>
                     <div className="flex-container-column flex-grow-1">
-                        <Link to={`${postInfo.author.first_name}.${postInfo.author.last_name}`} state={{id: postInfo.author._id}}><h2 className="author-name">{`${postInfo.author.first_name} ${postInfo.author.last_name}`}</h2></Link>
+                        <Link to={`/${postInfo.author.first_name}.${postInfo.author.last_name}`} state={{ id: postInfo.author._id }}><h2 className="author-name">{`${postInfo.author.first_name} ${postInfo.author.last_name}`}</h2></Link>
                         <div className="created-at">22h</div>
                     </div>
                     <Option />
                 </div>
             </div>
             <div className='px-3 fs-6 font-color'>{postInfo.post}</div>
+            { postInfo.likes ? <div>Likes: {postInfo.likes}</div> : null}
             {postStat !== 0 ? <div className="px-3"> {postStat > 1 ? <p>{postStat} comments</p> : <p>{postStat} comment</p>}</div> : null}
             <div className="border-top border-bottom d-flex justify-content-around p-2">
-                <button className="rounded flex-fill" onClick={() => {
+                {/* <button className="rounded flex-fill" onClick={() => {
                     if (btnState) showComment(postInfo._id)
                     preventFetch()
                 }
-                }>Comment</button>
+                }>Comment</button> */}
+                {!postInfo.likers.includes(userId) ? <button className="rounded flex-fill" onClick={() => likePost(postInfo._id)}>Like</button> : <button onClick={() => unlikePost(postInfo._id)}>Unlike</button>}
                 {postInfo.author._id === userId ? <button className="flex-fill rounded" onClick={async () => {
                     await deletePost(postInfo._id)
                     loadFeed()
