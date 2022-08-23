@@ -62,29 +62,48 @@ exports.postStats = async (req, res, next) => {
 }
 
 exports.likePost = async (req, res, next) => {
-    const {postId, userId} = req.params
+    const { postId, userId } = req.params
     const post = await Post.findOneAndUpdate({
         _id: postId
-    }, {$inc : {'likes' : 1}})
-    
+    }, { $inc: { 'likes': 1 } })
+
     post.likers.push(userId)
 
     await post.save()
 
-    res.status(200).json({ message: 'liked', postId, post})
+    res.status(200).json({ message: 'liked', postId, post })
 
 }
 
 exports.unlikePost = async (req, res, next) => {
-    const {postId, userId} = req.params
+    const { postId, userId } = req.params
     const post = await Post.findOneAndUpdate({
         _id: postId
-    }, {$inc : {'likes' : -1}})
-    
+    }, { $inc: { 'likes': -1 } })
+
     post.likers.pull(userId)
 
     await post.save()
 
-    res.status(200).json({ message: 'unliked', postId, post})
+    res.status(200).json({ message: 'unliked', postId, post })
+
+}
+
+exports.getPostInfo = async (req, res, next) => {
+    const { postId } = req.params
+    const post = await Post.findById(postId)
+    const postMessage = post.post
+    res.status(200).json({ message: 'Received', postId, postMessage })
+
+}
+
+exports.editPost = async (req, res, next) => {
+    const { postId } = req.params
+    const { postBody } = req.body
+    const post = await Post.findOneAndUpdate({ _id: postId }, { post: postBody }, {
+        new: true
+    })
+
+    res.status(200).json({ message: 'Edited', postBody, post })
 
 } 
