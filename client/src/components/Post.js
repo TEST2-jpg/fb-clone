@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { ReactComponent as OptionIcon } from "../assets/options.svg";
 import { ReactComponent as Profile } from "../assets/profile.svg";
+import { ReactComponent as LikeLogo } from "../assets/like.svg";
 import WriteComment from "./WriteComment";
 import { Link } from "react-router-dom";
-import EditPost from "./EditPost";
 import moment from "moment";
 import Option from "./Option";
 
@@ -117,10 +117,17 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
         </div>
       </div>
       <div className="px-3 fs-6 font-color">{postInfo.post}</div>
-      <div className="d-flex like-comment-container">
-        {postInfo.likes ? <div>Likes: {postInfo.likes}</div> : null}
+      <div className="d-flex like-comment-container justify-content-between">
+        {postInfo.likes ? (
+          <div className="d-flex align-items-center">
+            <div className="d-flex like-count-logo-container justify-content-center">
+              <LikeLogo className="like-count-logo" />
+            </div>
+            <span className="like-count">{postInfo.likes}</span>
+          </div>
+        ) : null}
         {postStat !== 0 ? (
-          <div className="px-3">
+          <div className="px-3 ms-auto">
             {" "}
             {postStat > 1 ? (
               <div>{postStat} comments</div>
