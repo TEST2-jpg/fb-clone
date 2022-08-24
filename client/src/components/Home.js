@@ -4,17 +4,12 @@ import Post from './Post'
 import CreatePost from './CreatePost'
 import Sidebar from './Sidebar'
 import Login from './Login'
-const Home = ({ token, ps }) => {
+import Contacts from './Contacts'
+import Nav from './Nav'
+const Home = ({ token, ps, userData, userId }) => {
     const [feed, setFeed] = useState('')
     const navigate = useNavigate()
-
-    useEffect(() => {
-        if(!token) {
-            return navigate('/login')
-        }
-    }, [token])
-    
-    useEffect(() => {
+    const loadFeed = () => {
         const fetchPost = async () => {
             const response = await fetch('http://localhost:8080', {
                 headers: { Authorization: 'Bearer ' + token }
@@ -24,6 +19,16 @@ const Home = ({ token, ps }) => {
             console.log(postData)
         }
         fetchPost().catch(console.error)
+    }
+
+    useEffect(() => {
+        if (!token) {
+            return navigate('/login')
+        }
+    }, [token])
+
+    useEffect(() => {
+        loadFeed()
     }, [])
 
     const showComment = (postId) => {
@@ -38,7 +43,7 @@ const Home = ({ token, ps }) => {
             setFeed(updatedPost)
         }
         const fetchThisComment = async () => {
-            const response = await fetch('http://localhost:8080/users/' + postId , {
+            const response = await fetch(`http://localhost:8080/users/${userData._id}/posts/${postId}/comments`, {
                 headers: { Authorization: 'Bearer ' + token }
             })
             const postData = await response.json()
@@ -48,26 +53,34 @@ const Home = ({ token, ps }) => {
         fetchThisComment().catch(console.error)
     }
     return (
-        <div>
+        <>
             {token ? <div>
+                <Nav/>
                 <button onClick={() => {
                     console.log(feed)
-                    console.log(ps)
+                    console.log(userId)
                     console.log(token)
+                    console.log(userData)
+
                 }}>CONSOLE LOGS</button>
                 <div className='flex-container'>
-                    <Sidebar />
-                    <div>
-                        <CreatePost />
-                        {feed ? feed.map((postInfo) => {
-                            return (
-                                <Post postInfo={postInfo} key={postInfo._id} showComment={showComment} />
-                            )
-                        }) : <h1>Loading</h1>}
+                    <Sidebar fullName={userData.first_name + ' ' + userData.last_name} />
+                    <div className='d-flex px-4'>
+                        <div className='d-flex flex-column'>
+                            <CreatePost loadFeed={loadFeed} token={token} userId={userId} />
+                                <div>
+                                    {feed ? feed.map((postInfo) => {
+                                        return (
+                                            <Post loadFeed={loadFeed} token={token} userId={userId} postInfo={postInfo} key={postInfo._id} showComment={showComment} />
+                                        )
+                                    }) : <h1>Loading</h1>}
+                                </div>
+                        </div>
                     </div>
+                    <Contacts />
                 </div>
-            </div> : <Login/>}
-        </div>
+            </div> : <Login />}
+        </>
     )
 }
 
