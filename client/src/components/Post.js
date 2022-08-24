@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { ReactComponent as OptionIcon } from "../assets/options.svg";
 import { ReactComponent as Profile } from "../assets/profile.svg";
 import { ReactComponent as LikeLogo } from "../assets/like.svg";
+import { ReactComponent as LikeBtn } from "../assets/likebtn.svg";
+import { ReactComponent as LikedBtn } from "../assets/likedbtn.svg";
 import WriteComment from "./WriteComment";
 import { Link } from "react-router-dom";
 import moment from "moment";
@@ -128,7 +130,6 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
         ) : null}
         {postStat !== 0 ? (
           <div className="px-3 ms-auto">
-            {" "}
             {postStat > 1 ? (
               <div>{postStat} comments</div>
             ) : (
@@ -137,34 +138,42 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
           </div>
         ) : null}
       </div>
-
-      <div className="border-top border-bottom d-flex justify-content-around p-2">
-        {/* <button className="rounded flex-fill" onClick={() => {
+      <div className="px-3">
+        <div className="border-top border-bottom d-flex justify-content-around p-2">
+          {/* <button className="rounded flex-fill" onClick={() => {
                     if (btnState) showComment(postInfo._id)
                     preventFetch()
                 }
                 }>Comment</button> */}
-        {!postInfo.likers.includes(userId) ? (
-          <button
-            className="rounded flex-fill"
-            onClick={() => likePost(postInfo._id)}
-          >
-            Like
-          </button>
-        ) : (
-          <button onClick={() => unlikePost(postInfo._id)}>Unlike</button>
-        )}
-        {postInfo.author._id === userId ? (
-          <button
-            className="flex-fill rounded"
-            onClick={async () => {
-              await deletePost(postInfo._id);
-              loadFeed();
-            }}
-          >
-            Delete
-          </button>
-        ) : null}
+          {!postInfo.likers.includes(userId) ? (
+            <div
+              className="rounded flex-fill post-text-container d-flex justify-content-center align-items-center"
+              onClick={() => likePost(postInfo._id)}
+            >
+              <LikeBtn className="post-btn-svg" />
+              <span>Like</span>
+            </div>
+          ) : (
+            <div
+              className="rounded flex-fill post-text-container d-flex justify-content-center align-items-center"
+              onClick={() => unlikePost(postInfo._id)}
+            >
+              <LikedBtn className="post-btn-svg" />
+              <span className="text-primary">Liked</span>
+            </div>
+          )}
+          {postInfo.author._id === userId ? (
+            <button
+              className="flex-fill rounded"
+              onClick={async () => {
+                await deletePost(postInfo._id);
+                loadFeed();
+              }}
+            >
+              Delete
+            </button>
+          ) : null}
+        </div>
       </div>
       <WriteComment
         showComment={showComment}
