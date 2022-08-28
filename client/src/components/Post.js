@@ -1,29 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ReactComponent as OptionIcon } from "../assets/options.svg";
 import { ReactComponent as Profile } from "../assets/profile.svg";
 import { ReactComponent as LikeLogo } from "../assets/like.svg";
 import { ReactComponent as LikeBtn } from "../assets/likebtn.svg";
 import { ReactComponent as LikedBtn } from "../assets/likedbtn.svg";
+import { ReactComponent as CommentBtn } from "../assets/comment.svg";
 import WriteComment from "./WriteComment";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import Option from "./Option";
 
 const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
-  const [btnState, setBtn] = useState(true);
+  const [btnStates, setBtn] = useState({
+    comment: true,
+    like: true,
+    unlike: true,
+  });
   const [postStat, setpostStat] = useState([]);
   const [option, setOption] = useState(false);
-  const preventFetch = () => {
-    setBtn(false);
+  const commentRef = useRef(null);
+  const handleCommentClick = () => {
+    commentRef.current.focus();
   };
-  const deletePost = async (postId) => {
-    await fetch(`http://localhost:8080/users/${userId}/posts/${postId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: "Bearer " + token,
-      },
-    });
+  const preventFetch = (btnFor) => {
+    setBtn((prev) => ({ ...prev, [btnFor]: false }));
   };
   const getPostStat = async (postId) => {
     try {
@@ -139,40 +139,44 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
         ) : null}
       </div>
       <div className="px-3">
-        <div className="border-top border-bottom d-flex justify-content-around p-2">
+        <div className="border-top border-bottom d-flex justify-content-around p-1 btngrph">
           {/* <button className="rounded flex-fill" onClick={() => {
-                    if (btnState) showComment(postInfo._id)
+                    if (btnStates) showComment(postInfo._id)
                     preventFetch()
                 }
                 }>Comment</button> */}
           {!postInfo.likers.includes(userId) ? (
             <div
-              className="rounded flex-fill post-text-container d-flex justify-content-center align-items-center"
-              onClick={() => likePost(postInfo._id)}
+              className="rounded flex-fill-0 post-text-container d-flex justify-content-center align-items-center"
+              onClick={() => {
+                if (btnStates.like) likePost(postInfo._id);
+                preventFetch('like')
+                setBtn((prev) => ({...prev , unlike: true}))
+              }}
             >
               <LikeBtn className="post-btn-svg" />
-              <span>Like</span>
+              <span className="px-2">Like</span>
             </div>
           ) : (
             <div
-              className="rounded flex-fill post-text-container d-flex justify-content-center align-items-center"
-              onClick={() => unlikePost(postInfo._id)}
-            >
-              <LikedBtn className="post-btn-svg" />
-              <span className="text-primary">Liked</span>
-            </div>
-          )}
-          {postInfo.author._id === userId ? (
-            <button
-              className="flex-fill rounded"
-              onClick={async () => {
-                await deletePost(postInfo._id);
-                loadFeed();
+              className="rounded flex-fill-0 post-text-container d-flex justify-content-center align-items-center"
+              onClick={() =>{ 
+                if(btnStates.unlike) unlikePost(postInfo._id)
+                preventFetch('unlike')
+                setBtn((prev) => ({...prev , like: true}))
               }}
             >
-              Delete
-            </button>
-          ) : null}
+              <LikedBtn className="post-btn-svg" />
+              <span className="text-primary px-2">Liked</span>
+            </div>
+          )}
+          <div
+            onClick={handleCommentClick}
+            className="rounded flex-fill-0 post-text-container d-flex justify-content-center align-items-center"
+          >
+            <CommentBtn className="post-btn-svg" />
+            <span className="px-2">Comment</span>
+          </div>
         </div>
       </div>
       <WriteComment
@@ -181,6 +185,7 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
         authorId={postInfo.author._id}
         token={token}
         postInfoId={postInfo._id}
+        commentRef={commentRef}
       />
       {postInfo.comment.map((x, i) => (
         <div key={i}>
@@ -190,8 +195,8 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
       {postStat <= postInfo.comment.length ? null : (
         <div
           onClick={() => {
-            if (btnState) showComment(postInfo._id);
-            preventFetch();
+            if (btnStates.comment) showComment(postInfo._id);
+            preventFetch("comment");
           }}
         >
           View more comments
