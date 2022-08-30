@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 const Login = ({ token, setToken, setuserId, sp, ps }) => {
   let navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loginErr, setLoginErr] = useState(null)
 
   const handleChange = (e) => {
     setFormData((prevFormData) => {
@@ -28,9 +29,11 @@ const Login = ({ token, setToken, setuserId, sp, ps }) => {
         }),
       });
       const response = await jsonData.json();
+      if (jsonData.status === 403)
+        setLoginErr(response.mess)
       await setToken(response.token);
       await setuserId(response._id);
-      navigate("/");
+      if (response.token) navigate("/");
     } catch (error) {
       console.log(error);
     }
@@ -62,13 +65,16 @@ const Login = ({ token, setToken, setuserId, sp, ps }) => {
               name="password"
               value={formData.password}
             />
+            <p className="logerr text-center">{loginErr}</p>
             <button class="btn btn-primary btnstyle">Log In</button>
           </form>
           <div className="frgtpw mb-3">Forgot password?</div>
           <hr className="w-100 m-auto" />
           <div className="d-flex justify-content-center py-4">
             <Link to="/reg" className="styl-none">
-              <button className="cnabtn btn btn-success">Create new account</button>
+              <button className="cnabtn btn btn-success">
+                Create new account
+              </button>
             </Link>
           </div>
           <button
