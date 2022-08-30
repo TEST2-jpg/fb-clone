@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const Register = () => {
+const Register = ({ setToken, setuserId }) => {
+  let navigate = useNavigate();
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -16,6 +17,28 @@ const Register = () => {
       };
     });
   };
+  const logUser = async () => {
+    const { email, password } = formData;
+    try {
+      const jsonData = await fetch("http://localhost:8080/login", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const response = await jsonData.json();
+      await setToken(response.token);
+      await setuserId(response._id);
+      if (response.token) navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+    setFormData({ email: "", password: "" });
+  };
   const registerUser = async () => {
     const jsonData = await fetch("http://localhost:8080/reg", {
       method: "POST",
@@ -29,10 +52,10 @@ const Register = () => {
     await jsonData.json();
     setFormData({ first_name: "", last_name: "", email: "", password: "" });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    registerUser();
-    
+    await registerUser();
+    logUser();
   };
   return (
     <>
@@ -97,7 +120,12 @@ const Register = () => {
             </button>
           </div>
           <div>
-            <Link to="/login" className="text-decoration-none text-center create-post-font"><p>Already have an account?</p></Link>
+            <Link
+              to="/login"
+              className="text-decoration-none text-center create-post-font"
+            >
+              <p>Already have an account?</p>
+            </Link>
           </div>
         </form>
       </div>
