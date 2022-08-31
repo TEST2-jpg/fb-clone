@@ -2,21 +2,6 @@ import { useEffect, useState } from "react"
 
 const FriendAdd = ({token, userId, id}) => {
     const [statusInfo, setStatusInfo] = useState(null)
-    const addFriend = async () => {
-        const response = await fetch(`http://localhost:8080/friend`, {
-            method: 'POST',
-            headers: {
-                Authorization: 'Bearer ' + token,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                requesterId: userId,
-                recipientId: id,
-            })
-        })
-        const postData = await response.json()
-        friendStatus()
-    }
     const friendStatus = async () => {
         const response = await fetch(`http://localhost:8080/friend/${userId}/${id}`, {
             headers: {
@@ -31,19 +16,65 @@ const FriendAdd = ({token, userId, id}) => {
         friendStatus()
     }, [])
 
-    const determineButton = () => {
-        if (statusInfo.status === 0) return <button onClick={addFriend}>Add me</button>
-        else if (statusInfo.status === 1) return <button>Pending...</button>
-        else if (statusInfo.status === 2) return <button>Accept request</button>
-        else if (statusInfo.status === 3) return <div><h1>Friends</h1></div>
-        return <div>Not loaded</div>
+    const addFriend = async () => {
+        const response = await fetch(`http://localhost:8080/friend/addFriend`, {
+            method: 'POST',
+            headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                requesterId: userId,
+                recipientId: id,
+            })
+        })
+        const postData = await response.json()
+        friendStatus()
     }
 
+    const undoRequest = async() => {
+        const response = await fetch(`http://localhost:8080/friend/undoRequest`, {
+            method: 'POST',
+            headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                requesterId: userId,
+                recipientId: id,
+            })
+        })
+        const postData = await response.json()
+        friendStatus()
+    }
+    
+    const acceptRequest = async() => {
+        const response = await fetch(`http://localhost:8080/friend/acceptRequest`, {
+            method: 'POST',
+            headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                requesterId: userId,
+                recipientId: id,
+            })
+        })
+        friendStatus()
+    }
+
+    const determineButton = () => {
+        if (statusInfo.status === 0) return <button onClick={addFriend}>Add me</button>
+        else if (statusInfo.status === 1) return <button onClick={undoRequest}>Pending...</button>
+        else if (statusInfo.status === 2) return <button onClick={acceptRequest}>Accept request</button>
+        else if (statusInfo.status === 3) return <div><button onClick={undoRequest}>Remove friend</button></div>
+        return <div>Not loaded</div>
+    }
+    
     return (
         <div>
             {console.log(statusInfo)}
             {statusInfo && determineButton()}
-            <button onClick={addFriend}>Add me</button>
         </div>
     )
 }
