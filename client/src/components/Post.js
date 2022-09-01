@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import Option from "./Option";
 
-const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
+const Post = ({ postInfo, showComment, userId, token, loadFeed, setFeed }) => {
   const [btnStates, setBtn] = useState({
     comment: true,
     like: true,
@@ -44,18 +44,25 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
   };
 
   const likePost = async (postId) => {
-    await fetch(`http://localhost:8080/users/${userId}/posts/${postId}/like`, {
+    const response = await fetch(`http://localhost:8080/users/${userId}/posts/${postId}/like`, {
       method: "GET",
       headers: {
         "Content-type": "application/json; charset=UTF-8",
         Authorization: "Bearer " + token,
       },
     });
-    loadFeed();
+    const likes = await response.json()
+    setFeed(prev => {
+      let updated = prev.map(post => {
+        if(postInfo._id === likes.postId) return {...post, likers: likes.likers, likes: likes.likeNum }
+        return post
+      } )
+      return updated
+    })
   };
 
   const unlikePost = async (postId) => {
-    await fetch(
+    const response = await fetch(
       `http://localhost:8080/users/${userId}/posts/${postId}/unlike`,
       {
         method: "GET",
@@ -65,13 +72,19 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
         },
       }
     );
-    loadFeed();
+    const likes = await response.json()
+    setFeed(prev => {
+      let updated = prev.map(post => {
+        if(postInfo._id === likes.postId) return {...post, likers: likes.likers, likes: likes.likeNum }
+        return post
+      } )
+      return updated
+    })
   };
 
   useEffect(() => {
     getPostStat(postInfo._id);
   }, []);
-
   return (
     <div className="container border bg-white rounded-4 post-width mb-3 shadow-sm px-0">
       <div className="d-flex post-head">
@@ -80,25 +93,14 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
             <Profile className="profile" />
           </span>
           <div className="flex-container-column flex-grow-1">
-            <Link
-              className="link-name"
-              to={`/${postInfo.author.first_name}.${postInfo.author.last_name}`}
-              state={{ id: postInfo.author._id }}
-            >
+            <Link className="link-name" to={`/${postInfo.author._id}`}>
               <h2 className="author-name">{`${postInfo.author.first_name} ${postInfo.author.last_name}`}</h2>
             </Link>
             <div className="created-at">
               {moment(postInfo.createdAt).fromNow()}
             </div>
           </div>
-          {/* {postInfo.author._id === userId ? (
-            <EditPost
-              token={token}
-              userId={userId}
-              postInfo={postInfo}
-              loadFeed={loadFeed}
-            />
-          ) : null} */}
+
           <div className="option rounded-circle d-flex justify-content-center align-items-center">
             <div
               className="option rounded-circle d-flex justify-content-center align-items-center"
@@ -118,7 +120,12 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
           </div>
         </div>
       </div>
-      <div className="px-3 fs-6 font-color">{postInfo.post}</div>
+      <div className="px-3 fs-6 font-color card-text">{postInfo.post}</div>
+      {postInfo.imageUrl && (
+        <div className="card">
+          <img className="card-img-top" src={postInfo.imageUrl} alt="dog" />
+        </div>
+      )}
       <div className="d-flex like-comment-container justify-content-between">
         {postInfo.likes ? (
           <div className="d-flex align-items-center">
@@ -150,8 +157,8 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
               className="rounded flex-fill-0 post-text-container d-flex justify-content-center align-items-center"
               onClick={() => {
                 if (btnStates.like) likePost(postInfo._id);
-                preventFetch('like')
-                setBtn((prev) => ({...prev , unlike: true}))
+                preventFetch("like");
+                setBtn((prev) => ({ ...prev, unlike: true }));
               }}
             >
               <LikeBtn className="post-btn-svg" />
@@ -160,10 +167,10 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
           ) : (
             <div
               className="rounded flex-fill-0 post-text-container d-flex justify-content-center align-items-center"
-              onClick={() =>{ 
-                if(btnStates.unlike) unlikePost(postInfo._id)
-                preventFetch('unlike')
-                setBtn((prev) => ({...prev , like: true}))
+              onClick={() => {
+                if (btnStates.unlike) unlikePost(postInfo._id);
+                preventFetch("unlike");
+                setBtn((prev) => ({ ...prev, like: true }));
               }}
             >
               <LikedBtn className="post-btn-svg" />
@@ -180,6 +187,8 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
         </div>
       </div>
       <WriteComment
+       getPostStat={getPostStat}
+        setFeed={setFeed}
         showComment={showComment}
         userId={userId}
         authorId={postInfo.author._id}
@@ -195,11 +204,10 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed }) => {
       {postStat <= postInfo.comment.length ? null : (
         <div
           onClick={() => {
-            if (btnStates.comment) showComment(postInfo._id);
-            preventFetch("comment");
+           showComment(postInfo._id, postInfo.comment.length);
           }}
         >
-          View more comments
+          View more comments {postInfo.comment.length} of {postStat}
         </div>
       )}
     </div>
