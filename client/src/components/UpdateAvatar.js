@@ -5,8 +5,10 @@ const UpdateAvatar = ({
   setAvatarModal,
   token,
   userId,
-  setUserData,
+  setUserInfo,
   setHover,
+  setUserData,
+  avatarId
 }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const fileHandler = (e) => {
@@ -30,11 +32,21 @@ const UpdateAvatar = ({
       }
     );
     const response = await jsonData.json();
+    setUserInfo((prev) => ({ ...prev, avatar: response.avatar }));
     setUserData((prev) => ({ ...prev, avatar: response.avatar }));
+  };
+  const deleteAvatar = async () => {
+    await fetch(`http://localhost:8080/userVisit/${userId}/avatar?avatarId=${avatarId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     await avatarUpdate();
+    await deleteAvatar()
     setAvatarModal(false);
   };
   return (
@@ -50,12 +62,14 @@ const UpdateAvatar = ({
           </div>
         </div>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-          <input
-            className="form-control"
-            type="file"
-            name="image"
-            onChange={fileHandler}
-          ></input>
+          <div className="p-3">
+            <input
+              className="form-control"
+              type="file"
+              name="image"
+              onChange={fileHandler}
+            ></input>
+          </div>
           <div className="d-flex justify-content-center px-3 pb-3">
             <button
               className="btn btn-primary w-100"
