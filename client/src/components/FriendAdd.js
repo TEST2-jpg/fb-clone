@@ -64,16 +64,15 @@ const FriendAdd = ({token, userId, id}) => {
     }
 
     const determineButton = () => {
-        if (statusInfo.status === 0) return <button onClick={addFriend}>Add me</button>
-        else if (statusInfo.status === 1) return <button onClick={undoRequest}>Pending...</button>
-        else if (statusInfo.status === 2) return <button onClick={acceptRequest}>Accept request</button>
-        else if (statusInfo.status === 3) return <div><button onClick={undoRequest}>Remove friend</button></div>
+        if (statusInfo.status === 0) return <button className="btn btn-primary fw-semibold shadow-none w-100" onClick={addFriend}>Add Friend</button>
+        else if (statusInfo.status === 1) return <button className="btn btn-primary fw-semibold shadow-none w-100" onClick={undoRequest}>Pending...</button>
+        else if (statusInfo.status === 2) return <button className="btn btn-primary fw-semibold shadow-none w-100" onClick={acceptRequest}>Accept request</button>
+        else if (statusInfo.status === 3) return <div><button className="btn btn-primary fw-semibold shadow-none w-100" onClick={undoRequest}>Remove friend</button></div>
         return <div>Not loaded</div>
     }
     
     return (
-        <div>
-            {console.log(statusInfo)}
+        <div className="align-self-end w-100">
             {statusInfo && determineButton()}
         </div>
     )
