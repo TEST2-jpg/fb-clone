@@ -9,6 +9,7 @@ const Register = ({ setToken, setuserId }) => {
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState(null);
   const handleChange = (e) => {
     setFormData((prevFormData) => {
       return {
@@ -49,16 +50,34 @@ const Register = ({ setToken, setuserId }) => {
         formData,
       }),
     });
-    await jsonData.json();
+    if (jsonData.status === 422) return setErrors(await jsonData.json());
+    const response = await jsonData.json();
+    if (jsonData.status === 201) logUser();
     setFormData({ first_name: "", last_name: "", email: "", password: "" });
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     await registerUser();
-    logUser();
+  };
+  const setInvalidClass = (formField) => {
+    return errors?.errors.find((x) => x.param === formField)
+      ? "is-invalid"
+      : null;
+  };
+  const filterErrMsg = (formField) => {
+    return errors.errors
+      .filter((x) => x.param === formField)
+      .map((x) => <div className="invalid-feedback">{x.msg}</div>);
   };
   return (
     <>
+      <button
+        onClick={() => {
+          console.log(errors);
+        }}
+      >
+        ddd
+      </button>
       <img
         src="https://static.xx.fbcdn.net/rsrc.php/y8/r/dF5SId3UHWd.svg"
         alt="fb-logo"
@@ -70,21 +89,27 @@ const Register = ({ setToken, setuserId }) => {
           <div class="sign-title text-center">Create a new account</div>
           <div class="sign-desc text-center">It's quick and easy.</div>
         </div>
-        <form onSubmit={handleSubmit} className="form-reg">
+        {errors && errors.errors.map((x) => <div className="">{x.msg} </div>)}
+        <form onSubmit={handleSubmit} className="form-reg" noValidate>
           <div className="row flreg">
             <div className="mb-2 col-6 fname singup-input">
               <input
                 type="text"
                 placeholder="First Name"
-                className="form-control fname"
+                className={`form-control fname ${setInvalidClass(
+                  "formData.first_name"
+                )}`}
                 onChange={handleChange}
                 name="first_name"
                 value={formData.first_name}
               />
+              {errors && filterErrMsg("formData.first_name")}
             </div>
             <div className="mb-2 col-6 fname singup-input">
               <input
-                className="form-control lname"
+                className={`form-control lname ${setInvalidClass(
+                  "formData.last_name"
+                )}`}
                 type="text"
                 placeholder="Last name"
                 onChange={handleChange}
@@ -92,6 +117,7 @@ const Register = ({ setToken, setuserId }) => {
                 value={formData.last_name}
                 id="Lname"
               />
+              {errors && filterErrMsg("formData.last_name")}
             </div>
           </div>
           <div className="mb-2">
@@ -101,18 +127,25 @@ const Register = ({ setToken, setuserId }) => {
               onChange={handleChange}
               name="email"
               value={formData.email}
-              className="form-control signup-input"
+              className={`form-control signup-input ${setInvalidClass(
+                "formData.email"
+              )}`}
             />
+            {errors && filterErrMsg("formData.email")}
           </div>
-          <div className="mb-2">
+          <div className="mb-2 has-validation">
             <input
               type="password"
               placeholder="New Password"
               onChange={handleChange}
               name="password"
               value={formData.password}
-              className="form-control signup-input"
+              className={`form-control signup-input ${setInvalidClass(
+                "formData.password"
+              )}`}
             />
+            {errors &&
+              filterErrMsg("formData.password")}
           </div>
           <div className="container d-flex align-items-center justify-content-center">
             <button className="btn btn-success mt-2 w25 px-5 btnstyle">
