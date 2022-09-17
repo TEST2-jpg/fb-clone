@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-const FriendAdd = ({token, userId, id}) => {
+const FriendAdd = ({token, userId, id, load}) => {
     const [statusInfo, setStatusInfo] = useState(null)
     const friendStatus = async () => {
         const response = await fetch(`http://localhost:8080/friend/${userId}/${id}`, {
@@ -30,6 +30,7 @@ const FriendAdd = ({token, userId, id}) => {
         })
         const postData = await response.json()
         friendStatus()
+        load()
     }
 
     const undoRequest = async() => {
@@ -46,6 +47,7 @@ const FriendAdd = ({token, userId, id}) => {
         })
         const postData = await response.json()
         friendStatus()
+        load()
     }
     
     const acceptRequest = async() => {
@@ -61,6 +63,7 @@ const FriendAdd = ({token, userId, id}) => {
             })
         })
         friendStatus()
+        load()
     }
 
     const determineButton = () => {
