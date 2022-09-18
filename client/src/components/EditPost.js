@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ReactComponent as EditIcon } from "../assets/edit.svg";
 
-const EditPost = ({ token, userId, loadFeed, postInfo, setOption }) => {
+const EditPost = ({ token, userId, loadFeed, postInfo, setOption, setFeed }) => {
   const [post, setPost] = useState("");
   const fetchOldPost = async () => {
     const response = await fetch(
@@ -30,8 +30,15 @@ const EditPost = ({ token, userId, loadFeed, postInfo, setOption }) => {
         }),
       }
     );
-    await jsonData.json();
-    loadFeed();
+    let response = await jsonData.json();
+    setFeed(prev => {
+      return prev.map(post => {
+        if (post._id === response.post._id) {
+          return {...post, post: response.post.post}
+        }
+        return post
+      })
+    })
   };
 
   const loadingModal = () => {
