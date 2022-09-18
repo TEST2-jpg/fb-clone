@@ -1,10 +1,12 @@
-import { ReactComponent as EditIcon } from "../assets/edit.svg";
 import { ReactComponent as DeleteIcon } from "../assets/delete.svg";
 import { ReactComponent as SaveIcon } from "../assets/save.svg";
 import EditPost from "./EditPost";
+import { useState } from "react";
 
-const Option = ({ token, userId, postInfo, loadFeed, setOption }) => {
+const Option = ({ token, userId, postInfo, loadFeed, setOption, setFeed }) => {
+  const [delState, setDelState] = useState(true);
   const deletePost = async (postId) => {
+    preventFetch()
     await fetch(`http://localhost:8080/users/${userId}/posts/${postId}`, {
       method: "DELETE",
       headers: {
@@ -12,6 +14,12 @@ const Option = ({ token, userId, postInfo, loadFeed, setOption }) => {
         Authorization: "Bearer " + token,
       },
     });
+    setFeed((prev) => {
+      return prev.filter(post => post._id !== postId)
+    });
+  };
+  const preventFetch = () => {
+    setDelState(false);
   };
   return (
     <div
@@ -35,14 +43,14 @@ const Option = ({ token, userId, postInfo, loadFeed, setOption }) => {
           postInfo={postInfo}
           loadFeed={loadFeed}
           setOption={setOption}
+          setFeed={setFeed}
         />
       ) : null}
       {postInfo.author._id === userId ? (
         <div
           className="option-content-container"
-          onClick={async () => {
-            await deletePost(postInfo._id);
-            loadFeed();
+          onClick={async (e) => {
+            if (delState) await deletePost(postInfo._id);
           }}
         >
           <DeleteIcon className="option-content-icon" />

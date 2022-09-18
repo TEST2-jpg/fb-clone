@@ -1,7 +1,14 @@
 import { useState } from "react";
-import { ReactComponent as Profile } from "../assets/profile.svg";
 
-const WriteComment = ({ token, userId, authorId, postInfoId, showComment }) => {
+const WriteComment = ({
+  token,
+  userId,
+  postInfoId,
+  commentRef,
+  setFeed,
+  getPostStat,
+  avatar,
+}) => {
   const [comment, setComment] = useState("");
   const addComment = async () => {
     const jsonData = await fetch(
@@ -18,22 +25,34 @@ const WriteComment = ({ token, userId, authorId, postInfoId, showComment }) => {
         }),
       }
     );
-    await jsonData.json();
+    const response = await jsonData.json();
+    console.log(response);
+    setFeed((prev) => {
+      let updated = prev.map((post) => {
+        if (post._id === postInfoId)
+          return { ...post, comment: [response.comment, ...post.comment] };
+        return post;
+      });
+      console.log(updated);
+      return updated;
+    });
     setComment("");
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     await addComment();
-    showComment(postInfoId);
+    await getPostStat(postInfoId);
+    // showComment(postInfoId);
   };
   return (
-    <div className="mt-3">
+    <div className="mt-3 px-3">
       <form onSubmit={handleSubmit} className="mb-2">
         <div className="d-flex align-items-center">
-          <span>
-            <Profile className="profileside" />
+          <span className="avatar-container">
+            <img src={avatar} alt="avatar" className="avatar" style={{width: '32px', height: '32px'}} />
           </span>
           <input
+            ref={commentRef}
             className="form-control px-2 shadow-none rounded-5"
             name="comment"
             placeholder="Write a comment..."

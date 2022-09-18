@@ -10,9 +10,9 @@ const VisitUser = ({ token, userId, userData, setUserData }) => {
   const params = useParams();
   const id = params.userId;
   const [feed, setFeed] = useState(null);
-  const [authorInfo, setAuthorInfo] = useState(null);
   const [avatarModal, setAvatarModal] = useState(false);
   const [hover, setHover] = useState(false);
+  const [userInfo, setUserInfo] = useState()
 
   const getUserPage = async () => {
     const response = await fetch(`http://localhost:8080/userVisit/${id}`, {
@@ -22,23 +22,21 @@ const VisitUser = ({ token, userId, userData, setUserData }) => {
     });
     const data = await response.json();
     setFeed(data.postList);
-    setAuthorInfo(data.postList[0].author);
   };
 
-  const setAvatar = async () => {
-    const response = await fetch(
-      `http://localhost:8080/userVisit/${id}/avatar`,
-      {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      }
-    );
+  const getUserInfo = async () => {
+    const response = await fetch(`http://localhost:8080/users/${id}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     const data = await response.json();
+    setUserInfo(data)
   };
 
   useEffect(() => {
     getUserPage();
+    getUserInfo();
   }, []);
 
   const showComment = (postId) => {
@@ -71,6 +69,7 @@ const VisitUser = ({ token, userId, userData, setUserData }) => {
       <Nav />
       <div className="bg-white border-bottom">
         <div className="asd">asd</div>
+        <button onClick={() => console.log(userInfo)}>ISUDDHFH</button>
         <div className="text-center home-user-info d-flex justify-content-center container">
           <div className="d-flex">
             <div
@@ -78,22 +77,24 @@ const VisitUser = ({ token, userId, userData, setUserData }) => {
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
             >
-              <img
-                src={userData.avatar}
+              {userInfo && <img
+                src={userInfo.avatar}
                 alt="profile"
                 className="home-avatar border border-2 align-self-end"
                 onClick={() => setAvatarModal(true)}
-              />
-              {avatarModal && (
+              />}
+              {avatarModal && id===userData._id && (
                 <UpdateAvatar
                   setAvatarModal={setAvatarModal}
                   token={token}
                   userId={id}
-                  setUserData={setUserData}
+                  setUserInfo={setUserInfo}
                   setHover={setHover}
+                  setUserData={setUserData}
+                  avatarId={userInfo.avatarId}
                 />
               )}
-              {hover && (
+              {hover && id===userData._id && (
                 <div className="position-relative">
                   <Image
                     className="avatar-update"
@@ -103,9 +104,9 @@ const VisitUser = ({ token, userId, userData, setUserData }) => {
               )}
             </div>
             <div className="d-flex column wpoec">
-              {authorInfo && (
+              {userInfo && (
                 <h1 className="text-start">
-                  {authorInfo.first_name} {authorInfo.last_name}
+                  {userInfo.first_name} {userInfo.last_name}
                 </h1>
               )}
             </div>

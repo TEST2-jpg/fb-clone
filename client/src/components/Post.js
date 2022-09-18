@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { ReactComponent as OptionIcon } from "../assets/options.svg";
-import { ReactComponent as Profile } from "../assets/profile.svg";
 import { ReactComponent as LikeLogo } from "../assets/like.svg";
 import { ReactComponent as LikeBtn } from "../assets/likebtn.svg";
 import { ReactComponent as LikedBtn } from "../assets/likedbtn.svg";
@@ -10,7 +9,15 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import Option from "./Option";
 
-const Post = ({ postInfo, showComment, userId, token, loadFeed, setFeed }) => {
+const Post = ({
+  postInfo,
+  showComment,
+  userId,
+  token,
+  loadFeed,
+  setFeed,
+  avatar,
+}) => {
   const [btnStates, setBtn] = useState({
     comment: true,
     like: true,
@@ -44,21 +51,26 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed, setFeed }) => {
   };
 
   const likePost = async (postId) => {
-    const response = await fetch(`http://localhost:8080/users/${userId}/posts/${postId}/like`, {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: "Bearer " + token,
-      },
+    const response = await fetch(
+      `http://localhost:8080/users/${userId}/posts/${postId}/like`,
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+    const likes = await response.json();
+    setFeed((prev) => {
+      let updated = prev.map((post) => {
+        if (post._id === postId) {
+          return { ...post, likers: likes.likers, likes: likes.likeNum };
+        }
+        return post;
+      });
+      return updated;
     });
-    const likes = await response.json()
-    setFeed(prev => {
-      let updated = prev.map(post => {
-        if(postInfo._id === likes.postId) return {...post, likers: likes.likers, likes: likes.likeNum }
-        return post
-      } )
-      return updated
-    })
   };
 
   const unlikePost = async (postId) => {
@@ -72,14 +84,16 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed, setFeed }) => {
         },
       }
     );
-    const likes = await response.json()
-    setFeed(prev => {
-      let updated = prev.map(post => {
-        if(postInfo._id === likes.postId) return {...post, likers: likes.likers, likes: likes.likeNum }
-        return post
-      } )
-      return updated
-    })
+    const likes = await response.json();
+    setFeed((prev) => {
+      let updated = prev.map((post) => {
+        if (post._id === postId) {
+          return { ...post, likers: likes.likers, likes: likes.likeNum };
+        }
+        return post;
+      });
+      return updated;
+    });
   };
 
   useEffect(() => {
@@ -89,11 +103,20 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed, setFeed }) => {
     <div className="container border bg-white rounded-4 post-width mb-3 shadow-sm px-0">
       <div className="d-flex post-head">
         <div className="d-flex w-100 align-items-center">
-          <span>
-            <Profile className="profile" />
-          </span>
-          <div className="flex-container-column flex-grow-1">
+          <span className="avatar-container">
             <Link className="link-name" to={`/${postInfo.author._id}`}>
+              <img
+                src={postInfo.author.avatar}
+                alt="avatar"
+                className="avatar"
+              />
+            </Link>
+          </span>
+          <div className="flex-container-column flex-grow-1 ps-2">
+            <Link
+              className="link-name text-reset text-decoration-none"
+              to={`/${postInfo.author._id}`}
+            >
               <h2 className="author-name">{`${postInfo.author.first_name} ${postInfo.author.last_name}`}</h2>
             </Link>
             <div className="created-at">
@@ -115,6 +138,7 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed, setFeed }) => {
                 postInfo={postInfo}
                 loadFeed={loadFeed}
                 setOption={setOption}
+                setFeed={setFeed}
               />
             )}
           </div>
@@ -147,11 +171,6 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed, setFeed }) => {
       </div>
       <div className="px-3">
         <div className="border-top border-bottom d-flex justify-content-around p-1 btngrph">
-          {/* <button className="rounded flex-fill" onClick={() => {
-                    if (btnStates) showComment(postInfo._id)
-                    preventFetch()
-                }
-                }>Comment</button> */}
           {!postInfo.likers.includes(userId) ? (
             <div
               className="rounded flex-fill-0 post-text-container d-flex justify-content-center align-items-center"
@@ -187,7 +206,7 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed, setFeed }) => {
         </div>
       </div>
       <WriteComment
-       getPostStat={getPostStat}
+        getPostStat={getPostStat}
         setFeed={setFeed}
         showComment={showComment}
         userId={userId}
@@ -195,16 +214,32 @@ const Post = ({ postInfo, showComment, userId, token, loadFeed, setFeed }) => {
         token={token}
         postInfoId={postInfo._id}
         commentRef={commentRef}
+        avatar={avatar}
       />
-      {postInfo.comment.map((x, i) => (
-        <div key={i}>
-          {x.author.first_name} {x.author.last_name} ---- {x.comment}
-        </div>
-      ))}
+      <div className="px-3 pb-2">
+        {postInfo.comment.map((x, i) => (
+          <div key={i} className="d-flex pb-2">
+            <div>
+              <span className="avatar-container">
+                <img
+                  src={x.author.avatar}
+                  alt="avatar"
+                  className="avatar"
+                  style={{ width: "32px", height: "32px" }}
+                />
+              </span>
+            </div>
+            <div className="d-flex column ms-2 fof25color py-2 px-3 rounded-4" style={{maxWidth: '380px'}}>
+              <div>{x.author.first_name} {x.author.last_name}</div>
+              <div className="text-break">{x.comment}</div>
+            </div>
+          </div>
+        ))}
+      </div>
       {postStat <= postInfo.comment.length ? null : (
         <div
           onClick={() => {
-           showComment(postInfo._id, postInfo.comment.length);
+            showComment(postInfo._id, postInfo.comment.length);
           }}
         >
           View more comments {postInfo.comment.length} of {postStat}
