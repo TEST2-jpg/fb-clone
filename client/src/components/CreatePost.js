@@ -2,7 +2,14 @@ import { useState } from "react";
 import { ReactComponent as Profile } from "../assets/profile.svg";
 import { ReactComponent as Close } from "../assets/close.svg";
 
-const CreatePost = ({ token, userId, loadFeed, setPostModal, fullName }) => {
+const CreatePost = ({
+  token,
+  userId,
+  avatar,
+  setPostModal,
+  fullName,
+  setFeed,
+}) => {
   const [post, setPost] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const fileHandler = (e) => {
@@ -24,13 +31,13 @@ const CreatePost = ({ token, userId, loadFeed, setPostModal, fullName }) => {
         body: form,
       }
     );
-    await jsonData.json();
+    const response = await jsonData.json();
+    setFeed((prev) => [response.post, ...prev]);
     setPost("");
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     await addPost();
-    loadFeed();
     setPostModal(false);
   };
   return (
@@ -49,7 +56,7 @@ const CreatePost = ({ token, userId, loadFeed, setPostModal, fullName }) => {
           <hr className="m-0 pb-2" />
           <div className="d-flex mx-3 py-3">
             <div className="pe-1">
-              <Profile className="profile" />
+            <img src={avatar} alt="avatar" className="avatar"/>
             </div>
             <div className="d-flex flex-column">{fullName}</div>
           </div>
@@ -61,30 +68,23 @@ const CreatePost = ({ token, userId, loadFeed, setPostModal, fullName }) => {
               value={post}
               onChange={(e) => setPost(e.target.value)}
             ></textarea>
-            <input
-              className="form-control"
-              type="file"
-              name="image"
-              onChange={fileHandler}
-            ></input>
+            <div className="m-3">
+              <input
+                className="form-control"
+                accept="image/png, image/jpg, image/jpeg"
+                type="file"
+                name="image"
+                onChange={fileHandler}
+              ></input>
+            </div>
             <div className="d-flex justify-content-center px-3 pb-3">
               <button
                 className="btn btn-primary w-100"
-                disabled={!(post.length !== 0 || !!selectedFile )}
+                disabled={!(post.length !== 0 || !!selectedFile)}
               >
                 Post
               </button>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                const f = new FormData();
-                f.append("image", selectedFile);
-                console.log(f, "eeee", selectedFile);
-              }}
-            >
-              AISUD
-            </button>
           </form>
         </div>
       </div>
