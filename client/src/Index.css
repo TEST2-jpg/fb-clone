@@ -1,0 +1,566 @@
+/* * {
+    border: 1px solid red;
+} */
+
+body {
+  background-color: #f0f2f5;
+}
+
+.flex-container {
+  display: flex;
+}
+
+.svg16px {
+  height: 18px;
+}
+
+.flex-container-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile {
+  height: 40px;
+}
+
+.post-head-container {
+  display: flex;
+}
+
+.post-head {
+  padding: 12px 16px 0 16px;
+  margin-bottom: 12px;
+}
+
+.created-at {
+  font-size: 0.8125rem;
+}
+
+.author-name {
+  font-size: 15px;
+  margin: 0;
+}
+
+.font-color {
+  color: #050505;
+  font-weight: 400;
+}
+
+.contacts {
+  height: 100%;
+  position: fixed;
+  width: 23%;
+}
+
+.wid {
+  width: 300px !important;
+}
+
+svg.profileside {
+  height: 32px;
+  width: 32px;
+}
+
+input {
+  background-color: #f0f2f5 !important;
+}
+
+.nav-ul {
+  display: flex;
+  list-style: none;
+  justify-content: center;
+  align-items: center;
+  height: 56px;
+  margin: 0;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.nav-ul > li,
+li > a {
+  width: 111.6px;
+  height: 100%;
+  display: block;
+  text-align: center;
+}
+
+li > a {
+  padding: 4px 8px;
+}
+
+.nav-ul > li {
+  margin-left: 8px;
+}
+.nav-ul {
+  padding: 0px 110px;
+}
+
+.nav-icon {
+  height: 28px;
+}
+
+.div-container {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  inset: 4px 0px;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.div-container:hover {
+  background-color: #e2e2e2a2;
+  cursor: pointer;
+}
+
+.logo-container {
+  pointer-events: none;
+}
+
+nav {
+  display: flex;
+}
+
+.fb-logo-color {
+  fill: #0e59f0e0;
+}
+
+.option {
+  position: relative;
+  width: 36px;
+  height: 36px;
+}
+
+.option:hover {
+  background-color: #0505051a;
+  cursor: pointer;
+}
+
+#option::before {
+  position: absolute;
+  content: "";
+  left: 90%;
+  bottom: 100%;
+  border-style: solid;
+  border-color: #5550 transparent #0000003d transparent;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid white;
+}
+
+#option {
+  position: absolute !important;
+  width: 271px;
+  background-color: white;
+  top: 100%;
+  right: 3px;
+  padding: 8px;
+}
+
+.option-content-container {
+  display: flex;
+  margin: 0 8px;
+  padding: 8px;
+}
+
+.option-content-icon {
+  width: 25px;
+}
+
+.option-content-text {
+  font-weight: 500;
+}
+
+.option-content-container:hover {
+  cursor: pointer;
+  transition: 330ms;
+  background-color: rgb(243, 242, 241);
+}
+
+hr {
+  margin: 8px 16px;
+}
+
+.option-content-disc {
+  font-size: 12px;
+  color: #65676b;
+  font-weight: 400;
+}
+
+.link-name {
+  width: fit-content;
+}
+
+.d-flex.flex-column {
+  width: 500px;
+}
+
+input.form-control.rounded-5 {
+  width: 420px;
+  border: none;
+}
+
+.create-post-font {
+  font-size: 17px;
+}
+.px-3.fs-6.font-color {
+  padding: 4px 16px 0px 16px;
+}
+
+.like-comment-container {
+  margin: 0 16px;
+  padding: 10px 0;
+}
+
+.like-count {
+  width: 100px;
+  padding-left: 6px;
+}
+
+.like-count-logo {
+  width: 14px;
+}
+
+.container-cp {
+  width: 500px;
+}
+
+.like-count-logo-container {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #0e59f0e0;
+}
+
+path.bg-w {
+  fill: white;
+}
+
+.post-text-container {
+  font-size: 15px;
+  color: #65676b;
+  font-weight: 600;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.post-btn-svg {
+  width: 18px;
+  height: 18px;
+}
+
+.post-text-container:hover {
+  background-color: #a4a4a436;
+  transition: 100ms;
+}
+
+.post-text-container:active {
+  background-color: #a4a4a40a;
+}
+
+.btngrph {
+  height: 44px;
+  gap: 8px;
+}
+
+path.liked {
+  fill: #0e59f0e0;
+}
+
+.flex-fill-0 {
+  flex: 1 1 0 !important;
+}
+
+.padt72 {
+  padding-top: 72px;
+}
+
+.padb112 {
+  padding-bottom: 112px;
+}
+
+.h536 {
+  height: 536px;
+  margin: 0 59px;
+}
+
+.form-log {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  width: 396px;
+}
+
+.pt-14 {
+  padding: 11px 0;
+  font-size: 17px;
+  margin-bottom: 12px;
+}
+
+.btnstyle {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.frgtpw {
+  color: rgb(24, 119, 242);
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.cnabtn {
+  height: 48px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.styl-none {
+  text-decoration: none;
+}
+
+.cpcol {
+  color: #5c7676;
+  width: 420px;
+  background-color: #f0f2f5;
+  padding: 10px;
+}
+
+.cpcol:hover {
+  background-color: #e4e5e6;
+}
+
+.cpcol:active {
+  background-color: #e4e5e654;
+}
+
+.create-post-bg {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgb(236 232 232 / 75%);
+  padding-top: 10%;
+}
+
+.textarea-create {
+  min-height: 100px;
+  border: 0;
+  font-size: 24px;
+  padding: 0 16px 40px;
+  resize: none;
+}
+
+.cr-post-txt {
+  font-size: 20px;
+  color: #050505;
+  font-weight: 700;
+}
+
+.oa129ix {
+  height: 60px;
+}
+
+.closebtn {
+  position: relative;
+  left: 150px;
+  width: 36px;
+  height: 36px;
+}
+
+.closebtnsvg {
+  width: 30px;
+  height: 30px;
+}
+
+.closebtn:hover {
+  background-color: #d4d4d4;
+}
+
+.logerr {
+  color: #f02849;
+  font-family: SFProText-Regular, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 16px;
+  margin-top: 8px;
+  text-align: left;
+}
+
+.card {
+  position: unset !important;
+}
+
+.form-container {
+  width: 27rem;
+  margin: auto;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+  background-color: #fff;
+}
+
+.sign-title {
+  font-size: 1.5625rem;
+  color: #1c1e21;
+  font-weight: 600;
+}
+
+.sign-desc {
+  font-size: 15px;
+  color: #606770;
+}
+
+.signup-input {
+  font-size: 15px;
+}
+
+.sign-head {
+  padding: 10px 16px;
+}
+
+.fname {
+  padding-right: calc(var(--bs-gutter-x) * 0.2) !important;
+}
+
+.form-reg {
+  padding: 16px;
+  border-top: 1px solid #dadde1;
+}
+
+.login-input {
+  padding: 14px 16px !important;
+}
+
+.flreg {
+  margin-top: calc(-1 * var(--bs-gutter-y));
+  margin-right: calc(-0.1 * var(--bs-gutter-x));
+  margin-left: calc(-0.5 * var(--bs-gutter-x));
+}
+
+.column {
+  flex-direction: column;
+}
+
+.wpoec {
+  width: 550px;
+}
+
+.avatar {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.fof25color {
+  background-color: #f0f2f5 !important;
+}
+
+.avatar-container {
+  width: 40px;
+  height: 40px;
+}
+
+.home-user-info {
+  height: 146px;
+}
+
+.home-avatar {
+  border-radius: 50%;
+  height: 168px;
+  width: 168px;
+  object-fit: cover;
+}
+
+.home-avatar:hover {
+  filter: brightness(95%);
+}
+
+.avatar-update {
+  right: 60px;
+  bottom: 70px;
+  position: absolute;
+  width: 40px;
+  color: #b1b1b1;
+}
+
+.sidebar-font {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.svg-container {
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+}
+
+#sidebar {
+  position: fixed;
+  height: 100%;
+}
+
+.side-content-container {
+  padding: 8px 20px;
+}
+
+.side-content-container:hover {
+  transition: 330ms;
+  background-color: #cbd8d887;
+}
+
+.side-avatar {
+  width: 25px;
+  height: 25px;
+}
+
+.border-start {
+  border-color: #4040ea !important;
+}
+
+.blue {
+  color: #0e59f0e0;;
+}
+
+.flexbasis {
+  flex-basis: 360px;
+  flex-shrink: 9999;
+  min-width: 280px
+}
+
+.rm-bg-color {
+  background-color: #e4e6eb;
+}
+
+.si3i0f9{
+  height: 52px;
+}
+
+.prj {
+  font-size: 17px;
+  font-weight: 500;
+  color: #050505;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.si3i0f9:hover {
+  background-color: #e6e6e7;
+  transition: 200ms;
+}
