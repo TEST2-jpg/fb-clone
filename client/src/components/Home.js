@@ -4,10 +4,9 @@ import Post from "./Post";
 import CreatePost from "./CreatePost";
 import Sidebar from "./Sidebar";
 import Login from "./Login";
-import Contacts from "./Contacts";
 import Nav from "./Nav";
-import { ReactComponent as Profile } from "../assets/profile.svg";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Contacts from "./Contacts";
 
 const Home = ({ token, ps, userData, userId }) => {
   const [feed, setFeed] = useState([]);
@@ -72,27 +71,24 @@ const Home = ({ token, ps, userData, userId }) => {
       {token ? (
         <div>
           <Nav />
-          <button
-            onClick={() => {
-              console.log(feed);
-              console.log(userId);
-              console.log(token);
-              console.log(userData);
-            }}
-          >
-            CONSOLE LOGS
-          </button>
           <div className="flex-container">
-            <Sidebar
-              fullName={userData.first_name + " " + userData.last_name}
-            />
+            <div className="flexbasis">
+              <Sidebar
+                fullName={userData.first_name + " " + userData.last_name}
+                userAvatar={userData.avatar}
+                uId={userData._id}
+              />
+            </div>
             <div className="d-flex px-4">
               <div className="d-flex flex-column">
-                {/* <CreatePost loadFeed={loadFeed} token={token} userId={userId} /> */}
                 <div className="container border bg-white rounded-4 create-post-width p-0 mb-3">
                   <div className="d-flex post-head">
                     <div className="pe-1">
-                      <Profile className="profile" />
+                      <img
+                        src={userData.avatar}
+                        alt="avatar"
+                        className="avatar"
+                      />
                     </div>
                     <div
                       className="rounded-5 create-post-font cpcol"
@@ -110,15 +106,20 @@ const Home = ({ token, ps, userData, userId }) => {
                     userId={userId}
                     setPostModal={setPostModal}
                     setFeed={setFeed}
+                    avatar={userData.avatar}
                   />
                 )}
-                <button onClick={fetchMore}>WAZZUP</button>
                 <div id="scroll">
-                  <InfiniteScroll dataLength={feed.length} next={fetchMore} hasMore={true}>
+                  <InfiniteScroll
+                    dataLength={feed.length}
+                    next={fetchMore}
+                    hasMore={true}
+                  >
                     {feed ? (
                       feed.map((postInfo) => {
                         return (
                           <Post
+                            avatar={userData.avatar}
                             setFeed={setFeed}
                             loadFeed={loadFeed}
                             token={token}
@@ -136,7 +137,12 @@ const Home = ({ token, ps, userData, userId }) => {
                 </div>
               </div>
             </div>
-            <Contacts />
+            <div
+              className="mt-3 flexbasis ms-auto"
+              style={{ flexBasis: "340px" }}
+            >
+              <Contacts userId={userId} token={token} />
+            </div>
           </div>
         </div>
       ) : (
